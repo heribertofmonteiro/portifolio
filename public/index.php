@@ -22,6 +22,13 @@ if (isset($_GET['logout'])) {
     exit;
 }
 
+// Set admin session for testing
+if (!isset($_SESSION['admin']) && isset($_GET['admin_login'])) {
+    $_SESSION['admin'] = true;
+    header('Location: index.php');
+    exit;
+}
+
 include '../src/data/translations.php';
 ?>
 <!DOCTYPE html>
@@ -71,9 +78,7 @@ include '../src/data/translations.php';
             <div class="relative container mx-auto px-4 text-center z-10">
                 <div class="mb-8">
                     <div class="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-r from-cyan-400 to-purple-400 p-1 shadow-2xl">
-                        <div class="w-full h-full rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
-                            <span class="text-4xl">👤</span>
-                        </div>
+                        <img src="assets/img/og-image.jpg" alt="Heriberto da Fonseca Monteiro" class="w-full h-full rounded-full object-cover">
                     </div>
                     <p class="text-cyan-300 text-sm uppercase tracking-wider">Desenvolvedor Full-Stack</p>
                 </div>

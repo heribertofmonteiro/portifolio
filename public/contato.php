@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="mb-3 sm:mb-4 md:mb-6">
                     <label for="message" class="block text-xs sm:text-sm font-medium mb-1 sm:mb-2 text-cyan-400"><?php echo $translations[$lang]['form_message']; ?></label>
-                    <textarea id="message" name="message" rows="3 sm:rows="4" md:rows="5" required class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-white/30 rounded-lg bg-white/20 dark:bg-gray-700/50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all resize-none text-sm md:text-base"></textarea>
+                    <textarea id="message" name="message" rows="4" required class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-white/30 rounded-lg bg-white/20 dark:bg-gray-700/50 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all resize-none text-sm md:text-base"></textarea>
                 </div>
                 <!-- Honeypot -->
                 <input type="text" name="website" style="display:none;">

@@ -51,7 +51,7 @@ $translations = [
         'form_error' => 'Erro ao enviar mensagem. Tente novamente.',
 
         // Footer
-        'footer_copyright' => '© 2024 Heriberto da Fonseca Monteiro. Todos os direitos reservados.',
+        'footer_copyright' => '© 2026 Heriberto da Fonseca Monteiro. Todos os direitos reservados.',
 
         // SEO
         'meta_title_home' => 'Heriberto Monteiro - Desenvolvedor Full-Stack',
@@ -112,7 +112,7 @@ $translations = [
         'form_error' => 'Error sending message. Please try again.',
 
         // Footer
-        'footer_copyright' => '© 2024 Heriberto da Fonseca Monteiro. All rights reserved.',
+        'footer_copyright' => '© 2026 Heriberto da Fonseca Monteiro. All rights reserved.',
 
         // SEO
         'meta_title_home' => 'Heriberto Monteiro - Full-Stack Developer',
@@ -173,7 +173,7 @@ $translations = [
         'form_error' => 'Error al enviar mensaje. Por favor, inténtalo de nuevo.',
 
         // Footer
-        'footer_copyright' => '© 2024 Heriberto da Fonseca Monteiro. Todos los derechos reservados.',
+        'footer_copyright' => '© 2026 Heriberto da Fonseca Monteiro. Todos los derechos reservados.',
 
         // SEO
         'meta_title_home' => 'Heriberto Monteiro - Desarrollador Full-Stack',
@@ -234,7 +234,7 @@ $translations = [
         'form_error' => 'メッセージ送信エラー。もう一度お試しください。',
 
         // Footer
-        'footer_copyright' => '© 2024 Heriberto da Fonseca Monteiro. 全著作権所有。',
+        'footer_copyright' => '© 2026 Heriberto da Fonseca Monteiro. 全著作権所有。',
 
         // SEO
         'meta_title_home' => 'Heriberto Monteiro - フルスタック開発者',
