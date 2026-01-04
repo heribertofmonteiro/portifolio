@@ -21,9 +21,12 @@
   ExpiresByType image/jpeg "access plus 1 month"
   ExpiresByType image/gif "access plus 1 month"
   ExpiresByType image/svg+xml "access plus 1 month"
+  ExpiresByType image/x-icon "access plus 1 month"
+  ExpiresByType font/woff "access plus 1 month"
+  ExpiresByType font/woff2 "access plus 1 month"
 </IfModule>
 
-# Security headers
+# Security headers (compatíveis com hospedagem compartilhada)
 <IfModule mod_headers.c>
   Header always set X-Content-Type-Options nosniff
   Header always set X-Frame-Options DENY
@@ -32,22 +35,53 @@
 </IfModule>
 
 # Prevent access to sensitive files
-<Files "composer.json">
+<FilesMatch "\.(json|lock|md|txt|log)$">
   Order allow,deny
   Deny from all
-</Files>
+</FilesMatch>
 
-<Files "package.json">
+<FilesMatch "^(composer|package|\.env)\.*">
   Order allow,deny
   Deny from all
-</Files>
+</FilesMatch>
 
-# Redirect to HTTPS (uncomment if SSL is enabled)
-# RewriteEngine On
-# RewriteCond %{HTTPS} off
-# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+# URL Rewriting for clean URLs
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  
+  # Base directory adjustment for shared hosting
+  RewriteBase /
+  
+  # Redirect to HTTPS (uncomment if SSL is enabled)
+  # RewriteCond %{HTTPS} off
+  # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  
+  # Handle clean URLs
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^projetos/?$ projetos.php [L]
+  RewriteRule ^contato/?$ contato.php [L]
+  RewriteRule ^admin/?$ admin.php [L]
+  
+  # Default fallback
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ index.php [L,QSA]
+</IfModule>
 
-# PHP settings
-php_value upload_max_filesize 10M
-php_value post_max_size 10M
-php_value memory_limit 256M
+# PHP settings for shared hosting compatibility
+<IfModule mod_php.c>
+  php_value upload_max_filesize 10M
+  php_value post_max_size 10M
+  php_value memory_limit 128M
+  php_value max_execution_time 30
+  php_value session.cookie_httponly 1
+  php_value session.cookie_secure 0
+  php_value display_errors 0
+  php_value log_errors 1
+</IfModule>
+
+# Error pages
+ErrorDocument 404 /index.php
+ErrorDocument 403 /index.php
+ErrorDocument 500 /index.php

@@ -1,5 +1,13 @@
 <?php
+// Incluir sistema de segurança e email
+require_once '../src/config/security.php';
+require_once '../src/config/email.php';
+
+$config = SecurityHelper::getConfig();
+$emailHelper = new EmailHelper($config);
+
 function detect_language() {
+    global $config;
     $accept_lang = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'pt';
     $langs = explode(',', $accept_lang);
     foreach ($langs as $lang) {
@@ -9,7 +17,7 @@ function detect_language() {
         if (strpos($lang, 'es') === 0) return 'es';
         if (strpos($lang, 'ja') === 0) return 'ja';
     }
-    return 'pt'; // default
+    return $config['seo']['default_language'];
 }
 $lang = $_GET['lang'] ?? detect_language();
 include '../src/data/translations.php';
@@ -17,26 +25,27 @@ include '../src/data/translations.php';
 // Process form
 $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $msg = trim($_POST['message'] ?? '');
+    $name = SecurityHelper::sanitizeInput($_POST['name'] ?? '');
+    $email = SecurityHelper::sanitizeInput($_POST['email'] ?? '');
+    $msg = SecurityHelper::sanitizeInput($_POST['message'] ?? '');
     $honeypot = $_POST['website'] ?? '';
 
     if ($honeypot !== '') {
         // Spam
         $message = $translations[$lang]['form_error'];
-    } elseif (empty($name) || empty($email) || empty($msg) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    } elseif (empty($name) || empty($email) || empty($msg)) {
+        $message = $translations[$lang]['form_error'];
+    } elseif (!SecurityHelper::validateEmail($email)) {
         $message = $translations[$lang]['form_error'];
     } else {
-        $to = 'hfmk2015@gmail.com';
-        $subject = 'Contato do portfólio: ' . $name;
-        $body = "Nome: $name\nEmail: $email\n\nMensagem:\n$msg";
-        $headers = "From: $email";
-
-        if (mail($to, $subject, $body, $headers)) {
-            $message = $translations[$lang]['form_success'];
-        } else {
-            $message = $translations[$lang]['form_error'];
+        // Usar novo sistema de email
+        $result = $emailHelper->sendContactEmail($name, $email, $msg, $lang);
+        $message = $result['message'];
+        
+        // Log para debug (apenas em desenvolvimento)
+        if ($config['debug']['enabled'] && !$result['success']) {
+            error_log('Email send failed: ' . $result['message']);
+            error_log('Email test results: ' . print_r($emailHelper->testEmailConfiguration(), true));
         }
     }
 }

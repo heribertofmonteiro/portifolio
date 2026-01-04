@@ -1,18 +1,30 @@
 <?php
-session_start();
+// Incluir sistema de segurança
+require_once '../src/config/security.php';
+$config = SecurityHelper::getConfig();
 
-// Simple auth
-$username = 'heriberto'; // Change this
-$password = 'Romario@!#$1994&&'; // Change this
-$login_error = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username']) && isset($_POST['password'])) {
-    if ($_POST['username'] !== $username || $_POST['password'] !== $password) {
+// Rate limiting para login
+$clientIP = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+if (!SecurityHelper::isLoginAllowed($clientIP)) {
+    $login_error = 'Muitas tentativas de login. Tente novamente em 15 minutos.';
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username']) && isset($_POST['password'])) {
+    $username = SecurityHelper::sanitizeInput($_POST['username']);
+    $password = SecurityHelper::sanitizeInput($_POST['password']);
+    
+    if ($username !== $config['security']['admin_username'] || $password !== $config['security']['admin_password']) {
         $login_error = 'Usuário ou senha incorretos!';
     } else {
         $_SESSION['admin'] = true;
+        $_SESSION['login_time'] = time();
     }
 }
-if (!isset($_SESSION['admin'])) {
+if (!isset($_SESSION['admin']) || 
+    (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $config['security']['session_timeout'])) {
+    // Destruir sessão se expirou
+    if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > $config['security']['session_timeout']) {
+        session_destroy();
+        $login_error = 'Sessão expirada. Faça login novamente.';
+    }
     ?>
     <!DOCTYPE html>
     <html lang="pt" x-data="{ darkMode: false }" x-init="darkMode = localStorage.getItem('darkMode') === 'true'; $watch('darkMode', value => localStorage.setItem('darkMode', value))" :class="{ 'dark': darkMode }">

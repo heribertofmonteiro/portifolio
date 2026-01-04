@@ -1,7 +1,10 @@
 <?php
-session_start();
+// Incluir sistema de segurança
+require_once '../src/config/security.php';
+$config = SecurityHelper::getConfig();
 
 function detect_language() {
+    global $config;
     $accept_lang = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'pt';
     $langs = explode(',', $accept_lang);
     foreach ($langs as $lang) {
@@ -9,9 +12,9 @@ function detect_language() {
         if (strpos($lang, 'pt') === 0) return 'pt';
         if (strpos($lang, 'en') === 0) return 'en';
         if (strpos($lang, 'es') === 0) return 'es';
-        if (strpos($lang, 'jp') === 0) return 'jp';
+        if (strpos($lang, 'ja') === 0) return 'ja';
     }
-    return 'pt'; // default
+    return $config['seo']['default_language']; // Usar config
 }
 $lang = $_GET['lang'] ?? detect_language();
 
@@ -22,8 +25,8 @@ if (isset($_GET['logout'])) {
     exit;
 }
 
-// Set admin session for testing
-if (!isset($_SESSION['admin']) && isset($_GET['admin_login'])) {
+// Set admin session for testing (apenas em desenvolvimento)
+if (!isset($_SESSION['admin']) && isset($_GET['admin_login']) && $config['debug']['enabled']) {
     $_SESSION['admin'] = true;
     header('Location: index.php');
     exit;
